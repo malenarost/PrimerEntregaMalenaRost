@@ -1,18 +1,19 @@
 import express from "express";
 import { carts, products } from "../utils.js";
+import { uploader } from "../utils.js";
 export const cartsRouter = express.Router();
 
 cartsRouter.get("/:cId", (req, res) => {
   const cId = req.params.cId;
   let cart = carts.find((p) => p.cId == cId);
   if (cart) {
-    return res.json({
+    return res.status(200).json({
       status: "success",
       msg: "cart find",
       data: cart,
     });
   } else {
-    return res.json({
+    return res.status(400).json({
       status: "error ",
       msg: "cart is not found",
       data: {},
@@ -40,9 +41,17 @@ cartsRouter.put("/:cId", (req, res) => {
   }
 });
 
-cartsRouter.post("/", (req, res) => {
+cartsRouter.post("/", uploader.single("file"), (req, res) => {
+  if (!req.file) {
+    res.status(400).send({
+      status: "error",
+      msg: "upload image failed or have some problems",
+      data: {},
+    });
+  }
   const cartToCreate = req.body;
   cartToCreate.cId = (Math.random() * 1000000000).toFixed(0);
+  cartToCreate.file = "htpp://localhost:8080/" + req.file.filename;
   if (req.body.cId && req.body.products) {
     carts.push(cartToCreate);
     return res.status(201).json({
@@ -63,12 +72,12 @@ cartsRouter.post("/", (req, res) => {
 
 cartsRouter.post(`/`, (req, res) => {
   const cartToCreate = req.body;
-  cartToCreate.id = (Math.random() * 1000000000).toFixed(0);
-  if (req.body.id && req.body.products) {
+  cartToCreate.cId = (Math.random() * 1000000000).toFixed(0);
+  if (req.body.cId && req.body.products) {
     cartsRouter.post("/carts/:cId/products/:pId", (req, res) => {
       const cId = parseInt(req.params.cId);
       const pId = parseInt(req.params.pId);
-      const cart = carts.find((c) => c.id === cId);
+      const cart = carts.find((c) => c.cId === cId);
       if (!cart) {
         return res.status(404).json({ error: "Cart not found." });
       }
@@ -92,11 +101,11 @@ cartsRouter.post(`/`, (req, res) => {
 
 cartsRouter.delete("/:cId", (req, res) => {
   const cId = req.params.cId;
-  carts = carts.filter((p) => p.cid != cId);
+  carts = carts.filter((p) => p.cId != cId);
 
   return res.status(200).json({
     status: "success",
-    msg: "filtramos los carts cuyo id es " + cId,
+    msg: "filtramos los carts cuyo Cid es " + cId,
     data: {},
   });
 });

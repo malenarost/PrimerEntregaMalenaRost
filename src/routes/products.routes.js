@@ -5,14 +5,14 @@ export const productsRouter = express.Router();
 productsRouter.get("/", (req, res) => {
   const limit = req.query.limit;
   if (req.query && limit) {
-    const productFilterByLimit = products.slice(0, 5);
-    return res.json({
+    const productFilterByLimit = products.slice(0, limit);
+    return res.status(200).json({
       status: "succes",
       msg: "five products found",
       data: productFilterByLimit,
     });
   } else {
-    return res.json({
+    return res.status(200).json({
       status: "succes",
       msg: "these are all the products  ",
       data: products,
@@ -21,7 +21,7 @@ productsRouter.get("/", (req, res) => {
 });
 
 productsRouter.get("/:pId", (req, res) => {
-  const pId = req.params.pid;
+  const pId = req.params.pId;
   const product = products.find((p) => p.pId == pId);
   if (product) {
     return res.status(200).json({
@@ -92,7 +92,7 @@ productsRouter.delete("/:pId", (req, res) => {
 
   return res.status(200).json({
     status: "success",
-    msg: "filter by id: " + pId,
+    msg: "filter by id :" + pId,
     data: {},
   });
 });
