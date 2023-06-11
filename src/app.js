@@ -5,11 +5,14 @@ import { productsVistaRouter } from "./routes/products.vista.routes.js";
 import { realTimeProductsRouter } from "./routes/realTimeProducts-socket.vista.routes.js";
 import { cartsRouter } from "./routes/carts.routes.js";
 import handlebars from "express-handlebars";
-import { __dirname } from "./utils.js";
+import { __dirname, connectMongo } from "./utils.js";
 import { Server } from "socket.io";
+import { usersRouter } from "./routes/users.routes.js";
 
 const app = express();
 const port = 8080;
+
+connectMongo();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //CONFIGURACIÓN DEL MOTOR DE HANDLEBARS
@@ -21,6 +24,7 @@ app.use(express.static(__dirname + "/public"));
 //ENDPOINTS TIPO API CON DATOS CRUDOS EN JSON
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/api/users", usersRouter);
 //HTML TIPO VISTA
 app.use("/vista/products", productsVistaRouter);
 //VISTA SOCKETS
