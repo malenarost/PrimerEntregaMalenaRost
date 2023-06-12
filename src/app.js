@@ -4,7 +4,7 @@ import { productsRouter } from "./routes/products.routes.js";
 import { productsVistaRouter } from "./routes/products.vista.routes.js";
 
 import { realTimeProductsRouter } from "./routes/realTimeProducts-socket.vista.routes.js";
-import { cartsRouter } from "./routes/carts.routes.js";
+//import { cartsRouter } from "./routes/carts.routes.js";
 import handlebars from "express-handlebars";
 import { __dirname } from "./dirName.js";
 import { Server } from "socket.io";
@@ -25,7 +25,7 @@ app.set("view engine", "handlebars");
 app.use(express.static(__dirname + "/public"));
 //ENDPOINTS TIPO API CON DATOS CRUDOS EN JSON
 app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
+//app.use("/api/carts", cartsRouter);
 app.use("/api/users", usersRouter);
 //HTML TIPO VISTA
 app.use("/vista/products", productsVistaRouter);
