@@ -1,9 +1,11 @@
 import express from "express";
 import { UserModel } from "../DAO/models/users.model.js";
+import { userService } from "../services/users.services.js";
 export const usersRouter = express.Router();
+
 usersRouter.get("/", async (req, res) => {
   try {
-    const users = await UserModel.find({});
+    const users = await userService.getAllUsers();
     return res.status(200).json({
       status: "success",
       msg: "listado de usuarios",

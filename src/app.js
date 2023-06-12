@@ -1,3 +1,4 @@
+//@ts-check
 import express from "express";
 import { productsRouter } from "./routes/products.routes.js";
 import { productsVistaRouter } from "./routes/products.vista.routes.js";
@@ -5,9 +6,10 @@ import { productsVistaRouter } from "./routes/products.vista.routes.js";
 import { realTimeProductsRouter } from "./routes/realTimeProducts-socket.vista.routes.js";
 import { cartsRouter } from "./routes/carts.routes.js";
 import handlebars from "express-handlebars";
-import { __dirname, connectMongo } from "./utils.js";
+import { __dirname } from "./dirName.js";
 import { Server } from "socket.io";
 import { usersRouter } from "./routes/users.routes.js";
+import { connectMongo } from "./utils/connections.js";
 
 const app = express();
 const port = 8080;

@@ -1,3 +1,5 @@
+/*
+
 import express from "express";
 import { carts, products } from "../utils.js";
 import { uploader } from "../utils.js";
@@ -109,3 +111,4 @@ cartsRouter.delete("/:cId", (req, res) => {
     data: {},
   });
 });
+*/
