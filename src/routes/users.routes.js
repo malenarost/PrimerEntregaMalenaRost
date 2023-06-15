@@ -1,5 +1,5 @@
+//@ts-check
 import express from "express";
-import { UserModel } from "../DAO/models/users.model.js";
 import { userService } from "../services/users.services.js";
 export const usersRouter = express.Router();
 
@@ -22,18 +22,13 @@ usersRouter.get("/", async (req, res) => {
 });
 
 usersRouter.post("/", async (req, res) => {
-  const { firstName, lastName, email } = req.body;
   try {
-    if (!firstName || !lastName || !email) {
-      console.log("validation error, insert your information again");
-
-      return res.status(400).json({
-        status: "error",
-        msg: "please complete",
-        data: {},
-      });
-    }
-    const userCreated = await UserModel.create(firstName, lastName, email);
+    const { firstName, lastName, email } = req.body;
+    const userCreated = await userService.createUser(
+      firstName,
+      lastName,
+      email
+    );
 
     return res.status(201).json({
       status: "success",
@@ -55,7 +50,7 @@ usersRouter.put("/:id", async (req, res) => {
     const { id } = req.params;
     const { firstName, lastName, email } = req.body;
 
-    const userUptaded = await UserModel.updateUser(
+    const userUptaded = await userService.updateUser(
       id,
       firstName,
       lastName,
@@ -79,7 +74,7 @@ usersRouter.put("/:id", async (req, res) => {
 usersRouter.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const deleted = await UserModel.deleteUser(id);
+    const deleted = await userService.deleteUser(id);
     return res.status(200).json({
       status: "success",
       msg: "user deleted",

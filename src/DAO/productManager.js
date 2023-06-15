@@ -1,6 +1,6 @@
-const fs = require("fs");
+//import { fs } from "fs";
 
-class productManager {
+export class productManager {
   constructor() {
     this.path = "./products.json";
     this.products = [];
@@ -93,4 +93,3 @@ class productManager {
     }
   }
 }
-module.exports = productManager;

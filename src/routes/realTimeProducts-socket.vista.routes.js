@@ -1,5 +1,5 @@
 import express from "express";
-import { products } from "../utils.js";
+import { productManager } from "../DAO/productManager.js";
 export const realTimeProductsRouter = express.Router();
 
 realTimeProductsRouter.get("/", (req, res) => {
