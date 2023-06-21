@@ -1,12 +1,10 @@
 //@ts-check
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
-export const UserModel = model(
-  "users",
+const schema = new Schema({
+  firstName: { type: String, required: true, max: 100 /* , index: true */ },
+  lastName: { type: String, required: true, max: 100, index: true },
+  email: { type: String, required: true, max: 100 /* , unique: true */ },
+});
 
-  new Schema({
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true },
-  })
-);
+export const UserModel = model('users', schema);
