@@ -1,5 +1,5 @@
 //@ts-check
-/* import { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const courseSchema = new Schema({
   title: String,
@@ -8,4 +8,4 @@ const courseSchema = new Schema({
   professor: String,
 });
 
-export const CoursesModel = model('courses', courseSchema); */
+export const CoursesModel = model('courses', courseSchema);

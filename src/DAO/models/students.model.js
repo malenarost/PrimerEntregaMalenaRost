@@ -1,5 +1,5 @@
 //@ts-check
-/* import { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const studentSchema = new Schema({
   first_name: String,
@@ -19,14 +19,11 @@ const studentSchema = new Schema({
   },
 });
 
-
-
-export const StudentsModel = model('students', studentSchema); */
-
-/* studentSchema.pre('find', function () {
+export const StudentsModel = model('students', studentSchema);
+studentSchema.pre('find', function () {
   this.populate('courses.course');
 });
 
 studentSchema.pre('findOne', function () {
   this.populate('courses.course');
-}); */
+});
