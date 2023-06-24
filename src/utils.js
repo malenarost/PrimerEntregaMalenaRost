@@ -45,7 +45,7 @@ export async function connectMongo() {
       { name: 'Vegan', size: 'large', price: 18, quantity: 6, date: '2021-01-13T05:10:13Z' },
     ]);
     console.log(res);
-    /* res = await OrderModel.aggregate([
+    res = await OrderModel.aggregate([
       {
         $match: {
           size: 'medium',
@@ -84,7 +84,7 @@ export async function connectMongo() {
         },
       },
     ]);
-    console.log(JSON.stringify(res, null, 2)); */
+    console.log(JSON.stringify(res, null, 2));
     /* const res = await OrderModel.find({});
 
     console.log(res); */
