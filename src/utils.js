@@ -30,8 +30,8 @@ export async function connectMongo() {
     await connect('mongodb+srv://rostmalena:KtKFWc0aRUSV18BH@malenarostcluster.wdwpyij.mongodb.net/?retryWrites=true&w=majority');
     console.log('plug to mongo!!!');
 
-    /* const res = await UserModel.paginate({}, { limit: 5, page: 1 });
-    console.log(res); */
+    const res = await UserModel.paginate({}, { limit: 5, page: 1 });
+    console.log(res);
 
     /* let res = await UserModel.find();
     console.log(res); */
@@ -39,7 +39,7 @@ export async function connectMongo() {
     /* const res = await UserModel.paginate({}, { limit: 10, page: 1 });
     console.log(res); */
 
-    let res;
+    /*let res;
     res = await OrderModel.insertMany([
       { name: 'Cheese', size: 'medium', price: 13, quantity: 5, date: '2022-01-12T21:23:13.331Z' },
       { name: 'Vegan', size: 'large', price: 18, quantity: 6, date: '2021-01-13T05:10:13Z' },
@@ -84,7 +84,7 @@ export async function connectMongo() {
         },
       },
     ]);
-    console.log(JSON.stringify(res, null, 2));
+    console.log(JSON.stringify(res, null, 2));*/
     /* const res = await OrderModel.find({});
 
     console.log(res); */

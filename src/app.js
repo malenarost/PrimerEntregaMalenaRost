@@ -1,45 +1,69 @@
 import express from 'express';
-import { petsRouter } from './routes/pets.router.js';
-import { usersRouter } from './routes/users.router.js';
-import { usersHtmlRouter } from './routes/users.html.router.js';
-import { testSocketChatRouter } from './routes/test.socket.chat.router.js';
 import handlebars from 'express-handlebars';
-import path from 'path';
-import { __dirname, connectMongo, connectSocket } from './utils.js';
+import { Server } from 'socket.io';
+import { productManager } from './manager/productManager.js';
+import { cartsRoute } from './routes/carts.routes.js';
+import { productsRoute } from './routes/product.routes.js';
+import { realTimeProducts } from './routes/real-time-products.routes.js';
+import { __dirname } from './dirname.js';
+import { connectMongo } from './utils/connections.js';
+import { viewRouter } from './routes/views.routes.js';
 const app = express();
 const port = 8080;
 
-const httpServer = app.listen(port, () => {
-  console.log(`Example app listening on http://localhost:${port}`);
-});
-
 connectMongo();
-connectSocket(httpServer);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// CONFIGURACION DEL MOTORO DE HANDLEBARS
 app.engine('handlebars', handlebars.engine());
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
-// app.use(express.static("public"));
-app.use(express.static(path.join(__dirname, 'public')));
+//archivos publicos
+app.use(express.static(__dirname + '/public'));
 
-//Rutas: API REST CON JSON
-app.use('/api/users', usersRouter);
-app.use('/api/pets', petsRouter);
+app.get('/', async (req, res) => {
+  const allProducts = await productManager.getProducts();
+  res.render('home', { allProducts });
+});
 
-//Rutas: HTML RENDER SERVER SIDE
-app.use('/users', usersHtmlRouter);
+/* ENDPOINTS */
+app.use('/api/products', productsRoute);
+app.use('/api/carts', cartsRoute);
+app.use('/', viewRouter);
 
-//Rutas: SOCKETS
-app.use('/test-chat', testSocketChatRouter);
+/* VISTA SOCKET */
+app.use('/realtimeproducts', realTimeProducts);
 
 app.get('*', (req, res) => {
   return res.status(404).json({
     status: 'error',
-    msg: 'no encontrado',
+    msg: 'Page not found',
     data: {},
+  });
+});
+
+const httpServer = app.listen(port, () => {
+  console.log(`Server running on port http://localhost:${port}`);
+});
+
+const socketServer = new Server(httpServer);
+
+socketServer.on('connection', (socket) => {
+  socket.on('new-product-created', async (newProduct) => {
+    const productCreated = await productManager.addProduct(newProduct);
+    if (productCreated) {
+      const productList = await productManager.getProducts();
+      socketServer.emit('products', productList);
+    } else {
+      socketServer.emit('products', productCreated);
+    }
+  });
+
+  socket.on('delete-product', async (idToDelete) => {
+    await productManager.deleteProduct(idToDelete);
+    socketServer.emit('delete-product-in-table', idToDelete);
   });
 });
