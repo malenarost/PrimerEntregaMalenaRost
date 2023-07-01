@@ -49,12 +49,6 @@ class ProductManager {
     }
   }
 
-  async getProducts() {
-    const fileProducts = await fs.promises.readFile(this.path, 'utf-8');
-    const fileProductsParse = JSON.parse(fileProducts);
-    return fileProductsParse;
-  }
-
   async getProductById(id) {
     const fileProducts = await fs.promises.readFile(this.path, 'utf-8');
     const fileProductsParse = JSON.parse(fileProducts);
@@ -65,6 +59,12 @@ class ProductManager {
     } else {
       console.log("The product doesn't exist");
     }
+  }
+
+  async getProducts() {
+    const fileProducts = await fs.promises.readFile(this.path, 'utf-8');
+    const fileProductsParse = JSON.parse(fileProducts);
+    return fileProductsParse;
   }
 
   async updateProduct(id, newProduct) {

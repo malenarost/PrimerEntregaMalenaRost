@@ -1,17 +1,33 @@
 import express from 'express';
-import { cartsService } from '../services/carts.service.js';
-export const cartsRoute = express.Router();
+import { productService } from '../services/product.service.js';
+export const productsRoute = express.Router();
 
-cartsRoute.get('/:cid', async (req, res) => {
+productsRoute.get('/', async (req, res) => {
   try {
-    const cartId = req.params.cid;
-    const cart = await cartsService.getCartById(cartId);
-    return res.status(201).json({
+    const { page, limit } = req.query;
+    const products = await productService.getProducts(page, limit);
+    let productsMap = products.docs.map((prod) => {
+      return {
+        id: prod._id,
+        title: prod.title,
+        description: prod.description,
+        thumbnail: prod.thumbnail,
+        code: prod.code,
+        stock: prod.stock,
+      };
+    });
+    return res.status(200).json({
       status: 'success',
-      msg: `cartId: ${cartId}`,
-      data: cart,
+      payload: productsMap,
+      totalPages: products.totalPages,
+      prevPage: products.prevPage,
+      nextPage: products.nextPage,
+      page: products.page,
+      hasPrevPage: products.hasPrevPage,
+      hasNextPage: products.hasNextPage,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: 'error',
       msg: 'something went wrong',
@@ -20,107 +36,74 @@ cartsRoute.get('/:cid', async (req, res) => {
   }
 });
 
-cartsRoute.post('/', async (req, res) => {
+productsRoute.get('/:pid', async (req, res) => {
   try {
-    const newCart = await cartsService.createCart();
-    res.status(200).send({ status: 'success', data: newCart });
-  } catch (error) {
-    res.status(500).send({ status: 'error', message: error.message });
-  }
-});
-
-cartsRoute.post('/:cid/products/:pid', async (req, res) => {
-  try {
-    const cartId = req.params.cid;
-    const productId = req.params.pid;
-    await cartsService.addItemToCart(cartId, productId);
-    const cart = await cartsService.getCartById(cartId);
-    console.log('producto añadido');
-    return res.status(201).json({
+    let productId = req.params.pid;
+    const productFound = await productService.getProductById(productId);
+    return res.status(200).json({
       status: 'success',
-      msg: 'product added',
-      data: cart,
+      msg: 'product found',
+      data: productFound,
     });
   } catch (error) {
     return res.status(404).json({
       status: 'error',
-      msg: 'product not added',
-      data: {},
+      msg: 'product not found',
+      data: 'product ID not found',
     });
   }
 });
 
-cartsRoute.delete('/:cid/products/:pid', async (req, res) => {
+productsRoute.delete('/:id', async (req, res) => {
   try {
-    const cartId = req.params.cid;
-    const productId = req.params.pid;
-    await cartsService.deleteProductFromCart(cartId, productId);
-    return res.status(201).json({
+    const id = req.params.id;
+    await productService.deleteProduct(id);
+    return res.status(200).json({
       status: 'success',
-      msg: 'product deleted from this cart',
+      msg: 'product deleted',
       data: {},
     });
   } catch (error) {
     return res.status(404).json({
       status: 'error',
-      msg: 'product not deleted to the cart',
+      msg: 'product not exist',
       data: {},
     });
   }
 });
 
-cartsRoute.delete('/:cid', async (req, res) => {
+productsRoute.post('/', async (req, res) => {
   try {
-    const cartId = req.params.cid;
-    await cartsService.deleteAllProductsFromCart(cartId);
+    const productToCreate = req.body;
+    const productCreated = await productService.createProduct(productToCreate);
     return res.status(201).json({
       status: 'success',
-      msg: 'cart empty',
-      data: {},
+      msg: 'product create',
+      data: productCreated,
     });
   } catch (error) {
     return res.status(404).json({
       status: 'error',
-      msg: 'cart not empty',
+      msg: 'product not created',
       data: {},
     });
   }
 });
 
-cartsRoute.put('/:cid/products/:pid', async (req, res) => {
+productsRoute.put('/:id', async (req, res) => {
   try {
-    const cartId = req.params.cid;
-    const productId = req.params.pid;
-    const quantityBody = req.body;
-    await cartsService.putQuantityProduct(cartId, productId, quantityBody);
+    const id = req.params.id;
+    const newProduct = req.body;
+    await productService.putProduct(id, newProduct);
     return res.status(201).json({
       status: 'success',
-      msg: 'quantity edited',
-      data: {},
+      msg: 'successfully modified product',
+      data: newProduct,
     });
   } catch (error) {
     return res.status(404).json({
       status: 'error',
-      msg: 'quantity not edited',
-      data: {},
-    });
-  }
-});
-
-cartsRoute.put('/:cid', async (req, res) => {
-  try {
-    const cartId = req.params.cid;
-    const productArray = req.body;
-    const cart = await cartsService.putCartProductArray(cartId, productArray);
-    return res.status(201).json({
-      status: 'success',
-      msg: 'product array added',
-      data: cart,
-    });
-  } catch (error) {
-    return res.status(404).json({
-      status: 'error',
-      msg: 'product array not added',
+      msg: 'could not modify object',
       data: {},
     });
   }

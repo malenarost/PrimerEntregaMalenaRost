@@ -12,12 +12,6 @@ const storage = multer.diskStorage({
 
 export const uploader = multer({ storage });
 
-//----------------__DIRNAME------------------------------
-import path from 'path';
-import { fileURLToPath } from 'url';
-export const __filename = fileURLToPath(import.meta.url);
-export const __dirname = path.dirname(__filename);
-
 //----------------MONGO------------------------------
 import { connect, Schema, model } from 'mongoose';
 import faker from 'faker';
@@ -145,15 +139,6 @@ export async function connectMongo() {
       professor: 'guile',
     }); */
 
-    /* const created = CoursesModel.create({
-      topics: ['software', 'python'],
-      students: [],
-      title: 'backend',
-      description: 'wonderfull python course',
-      dificulty: 10,
-      professor: 'carlitos',
-    }); */
-
     /* const created = StudentsModel.create({
       first_name: 'javier',
       last_name: 'guerrero',
@@ -204,3 +189,9 @@ export function connectSocket(httpServer) {
     });
   });
 }
+
+//----------------__DIRNAME------------------------------
+import path from 'path';
+import { fileURLToPath } from 'url';
+export const __filename = fileURLToPath(import.meta.url);
+export const __dirname = path.dirname(__filename);

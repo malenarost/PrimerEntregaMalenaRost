@@ -14,11 +14,11 @@
 <section class='pagination'>
   <div>
     {{#if hasPrevPage}}
-      <a style='text-decoration: none' href='http://localhost:8080/products?page={{prevPage}}'>Prev</a>
+      <a href='http://localhost:8080/products?page={{prevPage}}'>Prev</a>
     {{/if}}
     <p>{{page}}</p>
     {{#if hasNextPage}}
-      <a style='text-decoration: none' href='http://localhost:8080/products?page={{nextPage}}'>Next</a>
+      <a href='http://localhost:8080/products?page={{nextPage}}'>Next</a>
     {{/if}}
   </div>
 </section>

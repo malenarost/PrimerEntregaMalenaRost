@@ -19,7 +19,7 @@ class CartsService {
     const cartFound = await this.getCartById(cartId);
     this.cartExistValidation(cartFound);
 
-    // Busca y comptueba si existe el producto
+    // Busca y comprueba si existe el producto
     const productToEdit = await productService.getProductById(productId);
     this.productExistValidation(productToEdit);
 
@@ -52,11 +52,11 @@ class CartsService {
   }
 
   async deleteProductFromCart(cartId, productId) {
-    // Busca y comprueba si exite el carrito
+    //  si exite el carrito
     const cartFound = await this.getCartById(cartId);
     this.cartExistValidation(cartFound);
 
-    // Busca y comptueba si existe el producto
+    // si existe el producto
     const productToDelete = await productService.getProductById(productId);
     this.productExistValidation(productToDelete);
 

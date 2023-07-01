@@ -1,3 +1,4 @@
+//@ts-check
 import express from 'express';
 import handlebars from 'express-handlebars';
 import { Server } from 'socket.io';
@@ -5,6 +6,7 @@ import { productManager } from './manager/productManager.js';
 import { cartsRoute } from './routes/carts.routes.js';
 import { productsRoute } from './routes/product.routes.js';
 import { realTimeProducts } from './routes/real-time-products.routes.js';
+// @ts-ignore
 import { __dirname } from './dirname.js';
 import { connectMongo } from './utils/connections.js';
 import { viewRouter } from './routes/views.routes.js';
@@ -34,7 +36,7 @@ app.use('/api/products', productsRoute);
 app.use('/api/carts', cartsRoute);
 app.use('/', viewRouter);
 
-/* VISTA SOCKET */
+/* VISTA */
 app.use('/realtimeproducts', realTimeProducts);
 
 app.get('*', (req, res) => {

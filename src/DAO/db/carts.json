@@ -1,6 +1,6 @@
 {
   "productos": [
-    { "idProduct": "647e7dffc7845f429139eb21", "quantity": 3 },
-    { "idProduct": "647e98e6a5fb1b31f277d26a", "quantity": 3 }
+    { "idProduct": "15", "quantity": 5 },
+    { "idProduct": "12", "quantity": 5 }
   ]
 }
