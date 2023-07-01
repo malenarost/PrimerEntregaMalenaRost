@@ -1,0 +1,4 @@
+[
+  { " id": 1, "title": "remera", "description": "remera deportiva", "price": 2367, "thubmail": "thubmail", "code": 2345, "stock": 20 },
+  { "id": null, "title": "short", "description": "short deportivo", "price": "2000", "thubmail": "frf", "code": "1000", "stock": "20" }
+]
