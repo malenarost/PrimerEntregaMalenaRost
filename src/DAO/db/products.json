@@ -1,9 +1,0 @@
-[
-  { "id": 11, "title": "pollera", "description": "pollera de cuero negra", "price": "4500", "thubmail": ".", "code": "2376", "stock": "15" },
-  { "id": 12, "title": "pollera de jean", "description": "pollera de jean", "price": "1263", "thubmail": ".", "code": "8908", "stock": "20" },
-
-  { "id": 15, "title": "remera", "description": "remera deportiva", "price": "2000", "thubmail": ".", "code": "1234", "stock": "5" },
-  { "id": 17, "title": "shorts", "description": "short deportivo ", "price": "3000", "thubmail": ".", "code": "8326", "stock": "8" },
-  { "id": 18, "title": "campera", "description": "campera de cuero ", "price": "10000", "thubmail": ".", "code": "1253", "stock": "30" },
-  { "id": 19, "title": "cinto", "description": "cinto de cuero negro", "price": "10000", "thubmail": ".", "code": "1265", "stock": "30" }
-]
