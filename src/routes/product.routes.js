@@ -1,110 +1,21 @@
+import { Router } from 'express';
 import express from 'express';
-import { productService } from '../services/product.service.js';
-export const productsRoute = express.Router();
+import { ProductController } from '../controllers/products.controller.js';
+import { checkAdmin } from '../middlewares/auth.js';
 
-productsRoute.get('/', async (req, res) => {
-  try {
-    const { page, limit } = req.query;
-    const products = await productService.getProducts(page, limit);
-    let productsMap = products.docs.map((prod) => {
-      return {
-        id: prod._id,
-        title: prod.title,
-        description: prod.description,
-        thumbnail: prod.thumbnail,
-        code: prod.code,
-        stock: prod.stock,
-      };
-    });
-    return res.status(200).json({
-      status: 'success',
-      payload: productsMap,
-      totalPages: products.totalPages,
-      prevPage: products.prevPage,
-      nextPage: products.nextPage,
-      page: products.page,
-      hasPrevPage: products.hasPrevPage,
-      hasNextPage: products.hasNextPage,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'error',
-      msg: 'something went wrong',
-      data: {},
-    });
-  }
-});
+export const productManagerRouter = Router();
 
-productsRoute.get('/:pid', async (req, res) => {
-  try {
-    let productId = req.params.pid;
-    const productFound = await productService.getProductById(productId);
-    return res.status(200).json({
-      status: 'success',
-      msg: 'product found',
-      data: productFound,
-    });
-  } catch (error) {
-    return res.status(404).json({
-      status: 'error',
-      msg: 'product not found',
-      data: 'product ID not found',
-    });
-  }
-});
+const productController = new ProductController();
 
-productsRoute.delete('/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-    await productService.deleteProduct(id);
-    return res.status(200).json({
-      status: 'success',
-      msg: 'product deleted',
-      data: {},
-    });
-  } catch (error) {
-    return res.status(404).json({
-      status: 'error',
-      msg: 'product not exist',
-      data: {},
-    });
-  }
-});
+productManagerRouter.use(express.json());
+productManagerRouter.use(express.urlencoded({ extended: true }));
 
-productsRoute.post('/', async (req, res) => {
-  try {
-    const productToCreate = req.body;
-    const productCreated = await productService.createProduct(productToCreate);
-    return res.status(201).json({
-      status: 'success',
-      msg: 'product create',
-      data: productCreated,
-    });
-  } catch (error) {
-    return res.status(404).json({
-      status: 'error',
-      msg: 'product not created',
-      data: {},
-    });
-  }
-});
+productManagerRouter.get('/', productController.getProducts);
 
-productsRoute.put('/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-    const newProduct = req.body;
-    await productService.putProduct(id, newProduct);
-    return res.status(201).json({
-      status: 'success',
-      msg: 'successfully modified product',
-      data: newProduct,
-    });
-  } catch (error) {
-    return res.status(404).json({
-      status: 'error',
-      msg: 'could not modify object',
-      data: {},
-    });
-  }
-});
+productManagerRouter.get('/:pid', productController.getProductById);
+
+productManagerRouter.put('/:pid', checkAdmin, productController.updateProduct);
+
+productManagerRouter.post('/', checkAdmin, productController.addProduct);
+
+productManagerRouter.delete('/:pid', checkAdmin, productController.deleteProduct);

@@ -1,73 +1,36 @@
-<div class='realtimeproducts-container'>
-  <form id='form-products'>
-    <div class='input-container title-price'>
-      <div class='input-form'>
-        <label for='title'>Title:</label>
-        <input id='form-new-product-title' type='text' name='title' placeholder='Title' required />
-      </div>
-      <div class='input-form'>
-        <label for='price'>Price:</label>
-        <input id='form-new-product-price' type='number' name='price' placeholder='Price' required />
-      </div>
-    </div>
-    <div class='input-container description-thumbail'>
-      <div class='input-form'>
-        <label for='description'>Description:</label>
-        <input id='form-new-product-description' type='text' name='description' placeholder='Description' required />
-      </div>
-      <div class='input-form'>
-        <label for='thubmail'>Thubmail:</label>
-        <input id='form-new-product-thubmail' type='text' name='thubmail' placeholder='Thubmail' />
-      </div>
-    </div>
-    <div class='input-container code-stock'>
-      <div class='input-form'>
-        <label for='code'>Code:</label>
-        <input id='form-new-product-code' type='text' name='code' placeholder='Code' required />
-      </div>
-      <div class='input-form'>
-        <label for='stock'>Stock:</label>
-        <input id='form-new-product-stock' type='number' name='stock' placeholder='Stock' required />
-      </div>
-    </div>
-    <input id='btn-form' type='submit' placeholder='Crear Producto' />
+<div>
+  <h1>Nuestros Productos a tiempo REAL</h1>
+  {{! method="POST" action="http://localhost:8080/api/products" }}
+
+  <form id='myForm'>
+    <label for='title'>Title:</label>
+    <input type='text' name='title' id='title' required />
+
+    <label for='description'>Description:</label>
+    <textarea name='description' id='description' required></textarea>
+
+    <label for='price'>Price:</label>
+    <input type='number' name='price' id='price' required />
+
+    <label for='thumbnails'>Thumbnails (comma-separated URLs):</label>
+    <input type='text' name='thumbnails' id='thumbnails' required />
+
+    <label for='code'>Code:</label>
+    <input type='text' name='code' id='code' required />
+
+    <label for='stock'>Stock:</label>
+    <input type='number' name='stock' id='stock' required />
+
+    <label for='category'>Category:</label>
+    <input type='text' name='category' id='category' required />
+
+    <button type='submit' value='Submit'>Submit</button>
   </form>
 
-  <div class='table-container'>
-    <h1>Todos los productos</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Price</th>
-          <th>Thubmail</th>
-          <th>Code</th>
-          <th>Stock</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id='dinamic-product-list'>
-        {{#each allProducts}}
-          <tr>
-            <td>{{this.id}}</td>
-            <td>{{this.title}}</td>
-            <td>{{this.description}}</td>
-            <td>{{this.price}}</td>
-            <td>{{this.thubmail}}</td>
-            <td>{{this.code}}</td>
-            <td>{{this.stock}}</td>
-            <td>
-              <button type='button' class='btn-delete' value={{this.id}}>
-              </button>
-            </td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
-  </div>
+  <ul id='allProducts'>
+
+  </ul>
+
 </div>
 <script src='/socket.io/socket.io.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-<script src='/js/realtimeproducts.js'></script>
+<script src='./js/index.js'></script>

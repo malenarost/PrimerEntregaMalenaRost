@@ -1,24 +1,43 @@
-<section class='card-container'>
-  {{#each payload}}
-    <div class='card'>
-      <img src='{{this.thumbnail}}' alt='image' />
-      <div class='card-data'>
-        <h2 class='card-title'>{{this.title}}</h2>
-        <p class='card-description'>{{this.description}}</p>
-        <p class='card-price'>Price: ${{this.price}}</p>
+<div class='main'>
+  <h1>Welcome {{session.sessionDataName}}, eres un {{session.sessionAuth}}!</h1>
+
+  <a href='/logout' class='logOut'>LogOut</a>
+
+  <div class='shop'>
+
+    {{#each p}}
+
+      <div class='containers'>
+        <p>Name: {{this.name}}</p>
+
+        <p>Description: {{this.description}}</p>
+
+        <p>Price: {{this.price}}</p>
+
+        <button>Add To pouch</button>
+
+        <a href='http://localhost:8080/productDetail/{{this._id}}'>More Details</a>
+
       </div>
-      <button id='{{this.id}}' class='btn-add-to-cart'>Add to cart</button>
-    </div>
-  {{/each}}
-</section>
-<section class='pagination'>
-  <div>
-    {{#if hasPrevPage}}
-      <a href='http://localhost:8080/products?page={{prevPage}}'>Prev</a>
-    {{/if}}
-    <p>{{page}}</p>
-    {{#if hasNextPage}}
-      <a href='http://localhost:8080/products?page={{nextPage}}'>Next</a>
-    {{/if}}
+    {{/each}}
   </div>
-</section>
+
+  <div class='botonera'>
+    {{this.pagingCounter}}
+    {{totalPages}}
+
+    <hr />
+    <hr />
+
+    {{prevPage}}
+    {{#if hasPrevPage}}
+      <a href='http://localhost:8080/products/?page={{prevPage}}'>⬅️</a>
+    {{/if}}
+    {{page}}
+    {{#if hasNextPage}}
+      <a href='http://localhost:8080/products/?page={{nextPage}}'>➡️</a>
+    {{/if}}
+    {{nextPage}}
+  </div>
+
+</div>

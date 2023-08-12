@@ -1,74 +1,44 @@
 import express from 'express';
-import { productService } from '../services/product.service.js';
-import { cartsService } from '../services/carts.service.js';
-export const viewRouter = express.Router();
-
-viewRouter.get('/products', async (req, res) => {
-  const { page, limit } = req.query;
-  let products = await productService.getProducts(page, limit);
-  const productsMap = products.docs.map((prod) => {
-    return {
-      id: prod._id.toString(),
-      title: prod.title,
-      description: prod.description,
-      price: prod.price,
-      thumbnail: prod.thumbnail,
-      code: prod.code,
-      stock: prod.stock,
-    };
-  });
-  return res.status(200).render('products', {
-    status: 'success',
-    payload: productsMap,
-    totalPages: products.totalPages,
-    prevPage: products.prevPage,
-    nextPage: products.nextPage,
-    page: products.page,
-    hasPrevPage: products.hasPrevPage,
-    hasNextPage: products.hasNextPage,
-  });
-});
-
-viewRouter.get('/carts/:cid', async (req, res) => {
-  const cartId = req.params.cid;
-  const cart = await cartsService.getCartById(cartId);
-  const productsMap = cart.productos.map((prod) => {
-    return {
-      id: prod._id.toString(),
-      title: prod.idProduct.title,
-      description: prod.idProduct.description,
-      price: prod.idProduct.price,
-      quantity: prod.quantity,
-    };
-  });
-  console.log(productsMap);
-  return res.status(200).render('carts', { productsMap });
-});
-
+import { Router } from 'express';
+import { ViewsController } from '../controllers/views.controller.js';
+import { productsModel } from '../DAO/models/products.model.js';
 import { checkAdmin, checkUser } from '../middlewares/auth.js';
-export const viewsRouter = express.Router();
 
-viewsRouter.get('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.render('error-page', { msg: 'no se pudo cerrar la session' });
-    }
-    return res.redirect('/login');
-  });
+const viewsController = new ViewsController();
+
+export const viewsRouter = Router();
+
+viewsRouter.use(express.json());
+viewsRouter.use(express.urlencoded({ extended: true }));
+
+viewsRouter.get('/', async (req, res) => {
+  res.render('login');
 });
 
-viewsRouter.get('/login', (req, res) => {
-  res.render('login-form');
+viewsRouter.get('/products', viewsController.getProducts);
+
+viewsRouter.get('/productDetail/:pid', viewsController.getProductById);
+
+viewsRouter.get('/carts/:cid', viewsController.getCartById);
+
+viewsRouter.get('/realtimeproducts', async (req, res) => {
+  res.render('realTimeProducts', {});
 });
 
-viewsRouter.get('/register', (req, res) => {
-  res.render('register-form');
+viewsRouter.get('/chat', async (req, res) => {
+  res.render('chat', {});
 });
 
-viewsRouter.get('/profile', checkUser, (req, res) => {
+viewsRouter.get('/login', async (req, res) => {
+  res.render('login');
+});
+
+viewsRouter.get('/logout', viewsController.logout);
+
+viewsRouter.get('/register', async (req, res) => {
+  res.render('register');
+});
+
+viewsRouter.get('/profile', checkUser, async (req, res) => {
   res.render('profile');
-});
-
-viewsRouter.get('/solo-para-admin', checkAdmin, (req, res) => {
-  res.send('ESTO SOLO LO PUEDE VER EL ADMIN');
 });

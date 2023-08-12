@@ -1,105 +1,40 @@
-import cookieParser from 'cookie-parser';
-
 import express from 'express';
 import handlebars from 'express-handlebars';
+import __dirname from './utils.js';
+import { productManagerRouter } from './routes/products.router.js';
+// import { ProductManagerMongo } from "./dao/services/productManagerMongo.js";
+// import { MsgModel } from "./dao/models/msgs.model.js";
+import { cartsRouter } from './routes/carts.router.js';
+import { viewsRouter } from './routes/views.router.js';
 import { Server } from 'socket.io';
-import { productManager } from './manager/productManager.js';
-import { cartsRoute } from './routes/carts.routes.js';
-import { productsRoute } from './routes/product.routes.js';
-import { realTimeProducts } from './routes/real-time-products.routes.js';
-import { viewRouter } from './routes/views.routes.js';
-// @ts-ignore
-import { __dirname } from './dirName.js';
-import { connectMongo } from './utils/connections.js';
+import { connectMongo } from './utils.js';
+import { authRouter } from './routes/auth.router.js';
+import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import { initializePassport } from './config/passport.config.js';
+import passport from 'passport';
+
 const app = express();
+app.use(cookieParser());
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl: 'mongodb+srv://rostmalena:KtKFWc0aRUSV18BH@malenarostcluster.wdwpyij.mongodb.net/?retryWrites=true&w=majority',
+      mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+    }),
+    secret: 'secretCoder',
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 const port = 8080;
 
 connectMongo();
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser('coder-secreto'));
-app.use(
-  session({
-    secret: 'un-re-secreto',
-    resave: true,
-    saveUninitialized: true,
-    cookie: { secure: true },
-  })
-);
-// CONFIGURACION DEL MOTORO DE HANDLEBARS
-app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname + '/views');
-app.set('view engine', 'handlebars');
 
-//archivos publicos
-app.use(express.static(__dirname + '/public'));
-
-app.get('/', async (req, res) => {
-  const allProducts = await productManager.getProducts();
-  res.render('home', { allProducts });
-});
-
-/* ENDPOINTS */
-app.use('/api/products', productsRoute);
-app.use('/api/carts', cartsRoute);
-app.use('/', viewRouter);
-
-/* VISTA */
-app.use('/realtimeproducts', realTimeProducts);
-
-////////////////////////////sessions/////////////////////////
-
-app.get('/session', (req, res) => {
-  if (req.session.cont) {
-    res.session.cont++;
-    res.send('nos visitaste' + req.session.cont);
-  } else {
-    req.session.cont = 1;
-    req.session.nombre = 'juan';
-    req.session.isAdmin = true;
-    res.send('nos visitaste' + 1);
-  }
-});
-
-app.get('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.json({ status: 'logout ERROR', body: err });
-    }
-    res.send('logout OK!');
-  });
-});
-/////////////////////Cookies///////////////////////
-
-/*app.get('/setCookie', (req, res) => {
-  res.cookie('cookie-test1', ' dato1', { maxAge: 10000, signed: true });
-  res.cookie('cookie-test2', ' dato2', { maxAge: 10000, signed: true });
-  res.cookie('cookie-test3', ' dato3', { maxAge: 10000, signed: true });
-  return res.json({ msg: 'cookie puesta' });
-});
-
-app.get('/getCookies', (req, res) => {
-  console.log('cookies', req.cookies);
-  console.log('signedCookies', req.signedCookies);
-  res.send('nada');
-});
-
-app.get('/deleteCookie', (req, res) => {
-  res.clearCookie('cookie-test1');
-  res.send('borrado');
-});*/
-
-/////////////////////////////
-
-app.get('*', (req, res) => {
-  return res.status(404).json({
-    status: 'error',
-    msg: 'Page not found',
-    data: {},
-  });
-});
+// const productManagerMongo = new ProductManagerMongo();
 
 const httpServer = app.listen(port, () => {
   console.log(`Server running on port http://localhost:${port}`);
@@ -107,19 +42,43 @@ const httpServer = app.listen(port, () => {
 
 const socketServer = new Server(httpServer);
 
-socketServer.on('connection', (socket) => {
-  socket.on('new-product-created', async (newProduct) => {
-    const productCreated = await productManager.addProduct(newProduct);
-    if (productCreated) {
-      const productList = await productManager.getProducts();
-      socketServer.emit('products', productList);
-    } else {
-      socketServer.emit('products', productCreated);
-    }
-  });
+app.engine('handlebars', handlebars.engine());
+app.set('views', __dirname + '/views');
+app.set('view engine', 'handlebars');
+app.use(express.static(__dirname + '/public'));
 
-  socket.on('delete-product', async (idToDelete) => {
-    await productManager.deleteProduct(idToDelete);
-    socketServer.emit('delete-product-in-table', idToDelete);
-  });
+app.use('/', viewsRouter);
+
+// socketServer.on("connection", async (socket) => {
+//   console.log("Nuevo cliente conectado");
+//   const products = await productManagerMongo.getProducts();
+//   socket.emit("products", products);
+//   const msgs = await MsgModel.find({});
+//   socketServer.sockets.emit("all_msgs", msgs);
+
+//   socket.on("formSubmission", async (data) => {
+//     await productManagerMongo.addProduct(data);
+//     const products = await productManagerMongo.getProducts();
+//     socketServer.sockets.emit("products", products);
+//   });
+
+//   socket.on("msg_front_to_back", async (msg) => {
+//     const msgCreated = await MsgModel.create(msg);
+//     const msgs = await MsgModel.find({});
+//     socketServer.sockets.emit("all_msgs", msgs);
+//   });
+// });
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/api/products', productManagerRouter);
+
+app.use('/api/carts', cartsRouter);
+
+app.use('/api/sessions', authRouter);
+
+app.get('*', (req, res) => {
+  res.status(404).send({ status: 'error', data: 'Page not found' });
 });
